@@ -1,0 +1,54 @@
+<header class="site-nav">
+    <nav class="navbar">
+        <a href="/home" class="nav-logo">
+            <span class="logo-mark"><i class="fas fa-shirt"></i></span>
+            <span>SwapStyle</span>
+        </a>
+        <ul class="nav-menu">
+            <li><a href="/home" class="nav-link<%= (activePage === 'home') ? ' active' : '' %>">Home</a></li>
+            <li><a href="/itemlisting" class="nav-link<%= (activePage === 'browse') ? ' active' : '' %>">Browse</a></li>
+            <% if (isAuthenticated) { %>
+                <% if (typeof currentUser !== 'undefined' && currentUser && currentUser.role === 'admin') { %>
+                    <li><a href="/getadminpannel" class="nav-link<%= (activePage === 'admin') ? ' active' : '' %>">Admin</a></li>
+                <% } else { %>
+                    <li><a href="/addClothes" class="nav-link<%= (activePage === 'addClothes') ? ' active' : '' %>">List an Item</a></li>
+                    <li><a href="/userDashboard" class="nav-link<%= (activePage === 'dashboard') ? ' active' : '' %>">Dashboard</a></li>
+                    
+                    <% if (['dashboard', 'purchaseRequests', 'myPurchaseRequests', 'salesHistory', 'purchaseHistory'].includes(activePage)) { %>
+                        <li><a href="/purchaseRequests" class="nav-link<%= (activePage === 'purchaseRequests') ? ' active' : '' %>">Purchase Requests</a></li>
+                        <li><a href="/myPurchaseRequests" class="nav-link<%= (activePage === 'myPurchaseRequests') ? ' active' : '' %>">My Requests</a></li>
+                        <li><a href="/salesHistory" class="nav-link<%= (activePage === 'salesHistory') ? ' active' : '' %>">Sales History</a></li>
+                        <li><a href="/purchaseHistory" class="nav-link<%= (activePage === 'purchaseHistory') ? ' active' : '' %>">Purchase History</a></li>
+                    <% } %>
+                <% } %>
+                <li><a href="/logout" class="nav-link">Logout</a></li>
+            <% } else { %>
+                <li><a href="/addClothes" class="nav-link<%= (activePage === 'addClothes') ? ' active' : '' %>">List an Item</a></li>
+                <li><a href="/Login" class="nav-link<%= (activePage === 'login') ? ' active' : '' %>">Login</a></li>
+                <li><a href="/Signin" class="nav-link<%= (activePage === 'signup') ? ' active' : '' %>">Sign Up</a></li>
+            <% } %>
+            <% if (typeof currentUser === 'undefined' || !currentUser || currentUser.role !== 'admin') { %>
+                <li><a href="/" class="nav-link<%= (activePage === 'virtualTryOn') ? ' active' : '' %>">Virtual Try-On</a></li>
+                <li><a href="/Feedback" class="nav-link<%= (activePage === 'feedback') ? ' active' : '' %>">Feedback</a></li>
+            <% } %>
+        </ul>
+        <button class="hamburger" type="button" aria-label="Toggle navigation">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+    </nav>
+</header>
+
+<script>
+    (function() {
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+        if (hamburger && navMenu) {
+            hamburger.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+            });
+        }
+    })();
+</script>
+

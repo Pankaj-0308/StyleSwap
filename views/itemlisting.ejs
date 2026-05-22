@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head', { title: 'Browse Items | SwapStyle', stylesheet: '/itemlisting.css' }) %>
+<body>
+    <% const itemList = typeof colthList !== 'undefined' && Array.isArray(colthList) ? colthList : []; %>
+    <%- include('partials/navbar', { activePage: 'browse' }) %>
+
+    <main class="page-shell">
+        <section class="container section">
+            <div class="hero-panel browse-hero">
+                <div class="split-grid featured-layout">
+                    <div class="featured-copy">
+                        <span class="eyebrow">Marketplace spotlight</span>
+                        <h1 id="featuredTitle">Curated community listing</h1>
+                        <p class="lead" id="featuredDescription">Explore detailed item cards with clearer pricing, softer contrast, and more structured metadata.</p>
+                        <div class="featured-meta">
+                            <div class="stats-card">
+                                <span class="label">Category</span>
+                                <span class="value" id="featuredCategory">-</span>
+                            </div>
+                            <div class="stats-card">
+                                <span class="label">Condition</span>
+                                <span class="value" id="featuredCondition">-</span>
+                            </div>
+                            <div class="stats-card">
+                                <span class="label">Size</span>
+                                <span class="value" id="featuredSize">-</span>
+                            </div>
+                        </div>
+                        <div class="panel-list">
+                            <div class="list-row">
+                                <span class="muted">Price</span>
+                                <strong id="featuredPrice">$0</strong>
+                            </div>
+                            <div class="list-row">
+                                <span class="muted">Points</span>
+                                <strong id="featuredPoints">0 pts</strong>
+                            </div>
+                            <div class="list-row">
+                                <span class="muted">Brand</span>
+                                <strong id="featuredBrand">Not specified</strong>
+                            </div>
+                            <div class="list-row">
+                                <span class="muted">Color</span>
+                                <strong id="featuredColor">Not specified</strong>
+                            </div>
+                        </div>
+                        <div class="actions">
+                            <% if (isAuthenticated) { %>
+                                <% if (typeof currentUser !== 'undefined' && currentUser && currentUser.role === 'admin') { %>
+                                    <span class="badge" style="background-color: var(--accent, #4f46e5); color: white; padding: 8px 16px; border-radius: 4px; font-size: 14px; font-weight: 600; display: inline-block;">Admin View Mode</span>
+                                    <form action="/initiatePurchase" method="POST" id="purchaseForm" style="display: none;">
+                                        <input type="hidden" name="clothesId" id="purchaseClothesId" value="">
+                                    </form>
+                                    <form id="deleteForm" style="display: none;">
+                                        <input type="hidden" name="clothesId" id="deleteClothesId" value="">
+                                    </form>
+                                <% } else { %>
+                                    <form action="/initiatePurchase" method="POST" id="purchaseForm" style="display: inline-block;">
+                                        <input type="hidden" name="clothesId" id="purchaseClothesId" value="">
+                                        <button type="submit" class="btn btn-primary">Purchase with Points</button>
+                                    </form>
+                                    <form id="deleteForm" style="display: none; margin-right: 8px;">
+                                        <input type="hidden" name="clothesId" id="deleteClothesId" value="">
+                                        <button type="submit" class="btn btn-danger" style="background-color: var(--danger); border-color: var(--danger); color: white;">Delete Listing</button>
+                                    </form>
+                                    <a href="/addClothes" class="btn btn-secondary">List something similar</a>
+                                <% } %>
+                            <% } else { %>
+                                <a href="/Login" class="btn btn-primary">Login to Purchase</a>
+                                <a href="/addClothes" class="btn btn-secondary">List something similar</a>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="featured-media">
+                        <img id="featuredImage" src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=1200&q=80" alt="Featured clothing item">
+                        <div class="featured-badge" id="featuredBadge">Featured</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="container section">
+            <div class="panel">
+                <div class="section-header">
+                    <div>
+                        <span class="eyebrow">Explore listings</span>
+                        <h2>Browse with clearer filters</h2>
+                    </div>
+                    <p>We rebuilt the filter bar so it matches the actual stored item values instead of hard-coded demo categories.</p>
+                </div>
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label for="categoryFilter">Category</label>
+                        <select id="categoryFilter"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="sortFilter">Sort by</label>
+                        <select id="sortFilter">
+                            <option value="featured">Featured first</option>
+                            <option value="priceAsc">Price: low to high</option>
+                            <option value="priceDesc">Price: high to low</option>
+                            <option value="newest">Newest first</option>
+                            <option value="name">Name</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="items-grid" id="itemsGrid"></div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const clothesData = <%- JSON.stringify(itemList) %>;
+        const currentUserId = '<%= isAuthenticated && currentUser ? currentUser.userId : "" %>';
+        const currentUserRole = '<%= isAuthenticated && currentUser ? currentUser.role : "" %>';
+        const fallbackData = [
+            {
+                itemName: 'Soft tailored blazer',
+                category: 'womens',
+                size: 'M',
+                condition: 'excellent',
+                brand: 'Studio Row',
+                color: 'Stone',
+                price: 32,
+                points: 320,
+                mainImageUrl: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1200&q=80',
+                description: 'A polished layer with easy structure and a neutral tone that pairs well with denim or tailored trousers.',
+                createdAt: new Date().toISOString(),
+                status: 'active'
+            },
+            {
+                itemName: 'Relaxed denim overshirt',
+                category: 'mens',
+                size: 'L',
+                condition: 'good',
+                brand: 'North Lane',
+                color: 'Indigo',
+                price: 24,
+                points: 210,
+                mainImageUrl: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1200&q=80',
+                description: 'A versatile layer with softened denim texture and everyday styling potential.',
+                createdAt: new Date(Date.now() - 86400000).toISOString(),
+                status: 'active'
+            }
+        ];
+
+        const marketplaceData = clothesData.length ? clothesData : fallbackData;
+        const itemsGrid = document.getElementById('itemsGrid');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const sortFilter = document.getElementById('sortFilter');
+        let filteredData = [...marketplaceData];
+        let currentFeaturedIndex = 0;
+
+        function formatLabel(value) {
+            if (!value) return 'Not specified';
+            return String(value)
+                .replace(/[_-]+/g, ' ')
+                .replace(/\b\w/g, char => char.toUpperCase());
+        }
+
+        function populateCategories() {
+            const categories = [...new Set(marketplaceData.map(item => item.category).filter(Boolean))];
+            categoryFilter.innerHTML = '<option value="all">All categories</option>' +
+                categories.map(category => `<option value="${category}">${formatLabel(category)}</option>`).join('');
+        }
+
+        function sortItems(items, sortKey) {
+            const clone = [...items];
+
+            if (sortKey === 'priceAsc') {
+                clone.sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
+            } else if (sortKey === 'priceDesc') {
+                clone.sort((a, b) => Number(b.price || 0) - Number(a.price || 0));
+            } else if (sortKey === 'newest') {
+                clone.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+            } else if (sortKey === 'name') {
+                clone.sort((a, b) => String(a.itemName || '').localeCompare(String(b.itemName || '')));
+            }
+
+            return clone;
+        }
+
+        function renderItems() {
+            itemsGrid.innerHTML = '';
+
+            if (!filteredData.length) {
+                itemsGrid.innerHTML = '<div class="empty-state">No items match this filter yet. Try another category or list the first item in that section.</div>';
+                return;
+            }
+
+            filteredData.forEach((item, index) => {
+                const card = document.createElement('article');
+                card.className = 'card item-card marketplace-card';
+                card.dataset.index = index;
+                card.innerHTML = `
+                    <div class="item-image">
+                        <img src="${item.mainImageUrl}" alt="${item.itemName}">
+                        <div class="overlay-chip">${formatLabel(item.condition || item.status || 'Available')}</div>
+                    </div>
+                    <div class="item-content">
+                        <span class="pill neutral">${formatLabel(item.category || 'Listing')}</span>
+                        <h3>${item.itemName}</h3>
+                        <p class="muted">${item.description ? item.description.slice(0, 96) + (item.description.length > 96 ? '...' : '') : 'Community listing with clear product details and pricing.'}</p>
+                        <div class="item-price">
+                            <span class="price">$${Number(item.price || 0).toFixed(2)}</span>
+                            <span class="points">${item.points || 0} pts</span>
+                        </div>
+                        <div class="item-meta">
+                            <span>Size: ${formatLabel(item.size || 'N/A')}</span>
+                            <span>${formatLabel(item.condition || 'Ready')}</span>
+                        </div>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => updateFeaturedItem(index));
+                itemsGrid.appendChild(card);
+            });
+
+            highlightActiveCard();
+        }
+
+        function highlightActiveCard() {
+            document.querySelectorAll('.marketplace-card').forEach(card => card.classList.remove('active'));
+            const activeCard = document.querySelector(`.marketplace-card[data-index="${currentFeaturedIndex}"]`);
+            if (activeCard) activeCard.classList.add('active');
+        }
+
+        function updateFeaturedItem(index) {
+            currentFeaturedIndex = index;
+            const item = filteredData[index];
+
+            if (!item) return;
+
+            document.getElementById('featuredImage').src = item.mainImageUrl;
+            document.getElementById('featuredImage').alt = item.itemName;
+            document.getElementById('featuredTitle').textContent = item.itemName;
+            document.getElementById('featuredDescription').textContent = item.description || 'No description provided for this listing yet.';
+            document.getElementById('featuredCategory').textContent = formatLabel(item.category);
+            document.getElementById('featuredCondition').textContent = formatLabel(item.condition || item.status);
+            document.getElementById('featuredSize').textContent = formatLabel(item.size);
+            document.getElementById('featuredPrice').textContent = `$${Number(item.price || 0).toFixed(2)}`;
+            document.getElementById('featuredPoints').textContent = `${item.points || 0} pts`;
+            document.getElementById('featuredBrand').textContent = formatLabel(item.brand);
+            document.getElementById('featuredColor').textContent = formatLabel(item.color);
+            document.getElementById('featuredBadge').textContent = formatLabel(item.status || item.condition || 'Featured');
+            
+            // Update the purchase form with the current item's ID
+            const purchaseClothesId = document.getElementById('purchaseClothesId');
+            if (purchaseClothesId && item._id) {
+                purchaseClothesId.value = String(item._id);
+            }
+
+            const purchaseForm = document.getElementById('purchaseForm');
+            const deleteForm = document.getElementById('deleteForm');
+            if (purchaseForm && deleteForm) {
+                if (currentUserRole === 'admin') {
+                    purchaseForm.style.display = 'none';
+                    deleteForm.style.display = 'none';
+                } else if (currentUserId && item.userId && String(item.userId) === String(currentUserId)) {
+                    purchaseForm.style.display = 'none';
+                    deleteForm.style.display = 'inline-block';
+                    const deleteClothesId = document.getElementById('deleteClothesId');
+                    if (deleteClothesId && item._id) {
+                        deleteClothesId.value = String(item._id);
+                    }
+                } else {
+                    purchaseForm.style.display = 'inline-block';
+                    deleteForm.style.display = 'none';
+                }
+            }
+            
+            highlightActiveCard();
+        }
+
+        function applyFilters() {
+            const selectedCategory = categoryFilter.value;
+            const sortValue = sortFilter.value;
+
+            filteredData = selectedCategory === 'all'
+                ? [...marketplaceData]
+                : marketplaceData.filter(item => item.category === selectedCategory);
+
+            filteredData = sortItems(filteredData, sortValue);
+            currentFeaturedIndex = 0;
+            renderItems();
+
+            if (filteredData.length) {
+                updateFeaturedItem(0);
+            }
+        }
+
+
+        categoryFilter.addEventListener('change', applyFilters);
+        sortFilter.addEventListener('change', applyFilters);
+
+        populateCategories();
+        applyFilters();
+
+        // Custom Validation Modal JS Implementation
+        document.addEventListener('DOMContentLoaded', () => {
+            const purchaseForm = document.getElementById('purchaseForm');
+            const deleteForm = document.getElementById('deleteForm');
+            const validationModal = document.getElementById('validationModal');
+            const modalIcon = document.getElementById('modalIcon');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+            const modalCloseBtn = document.getElementById('modalCloseBtn');
+            const modalCancelBtn = document.getElementById('modalCancelBtn');
+            let shouldReloadOnClose = false;
+            let confirmCallback = null;
+
+            function showPopupModal(title, message, type, onConfirm = null) {
+                if (!modalTitle || !modalMessage || !modalIcon || !validationModal) {
+                    console.error('Modal DOM elements not found');
+                    return;
+                }
+                modalTitle.textContent = title;
+                modalMessage.textContent = message;
+                
+                if (onConfirm) {
+                    confirmCallback = onConfirm;
+                    if (modalCancelBtn) modalCancelBtn.style.display = 'inline-block';
+                    if (modalCloseBtn) {
+                        modalCloseBtn.textContent = 'Confirm';
+                        modalCloseBtn.className = 'modal-btn modal-btn-primary';
+                        modalCloseBtn.style.backgroundColor = 'var(--danger)';
+                        modalCloseBtn.style.borderColor = 'var(--danger)';
+                    }
+                    modalIcon.className = 'modal-icon error';
+                    modalIcon.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                    shouldReloadOnClose = false;
+                } else {
+                    confirmCallback = null;
+                    if (modalCancelBtn) modalCancelBtn.style.display = 'none';
+                    if (modalCloseBtn) {
+                        modalCloseBtn.textContent = 'OK';
+                        modalCloseBtn.className = 'modal-btn modal-btn-primary';
+                        modalCloseBtn.style.backgroundColor = '';
+                        modalCloseBtn.style.borderColor = '';
+                    }
+                    
+                    // Set styles and icons based on type (success / error)
+                    if (type === 'success') {
+                        modalIcon.className = 'modal-icon success';
+                        modalIcon.innerHTML = '<i class="fas fa-check"></i>';
+                        shouldReloadOnClose = true;
+                    } else {
+                        modalIcon.className = 'modal-icon error';
+                        modalIcon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+                        shouldReloadOnClose = false;
+                    }
+                }
+
+                validationModal.classList.add('active');
+            }
+
+            function closePopupModal(isConfirmed = false) {
+                if (validationModal) {
+                    validationModal.classList.remove('active');
+                }
+                if (isConfirmed && typeof confirmCallback === 'function') {
+                    const cb = confirmCallback;
+                    confirmCallback = null; // Clear reference
+                    cb();
+                } else {
+                    confirmCallback = null;
+                    if (shouldReloadOnClose) {
+                        window.location.reload();
+                    }
+                }
+            }
+
+            if (modalCloseBtn) {
+                modalCloseBtn.addEventListener('click', () => closePopupModal(true));
+            }
+
+            if (modalCancelBtn) {
+                modalCancelBtn.addEventListener('click', () => closePopupModal(false));
+            }
+
+            // Close modal when clicking on backdrop overlay
+            if (validationModal) {
+                validationModal.addEventListener('click', (e) => {
+                    if (e.target === validationModal) {
+                        closePopupModal(false);
+                    }
+                });
+            }
+
+            if (purchaseForm) {
+                purchaseForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const purchaseClothesIdInput = document.getElementById('purchaseClothesId');
+                    const clothesId = purchaseClothesIdInput ? purchaseClothesIdInput.value : '';
+                    if (!clothesId) {
+                        showPopupModal('Error', 'Please select an item to purchase.', 'error');
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch('/initiatePurchase', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({ clothesId })
+                        });
+
+                        const data = await response.json();
+                        if (response.ok && data.success) {
+                            showPopupModal('Swap Request Sent', data.message || 'Your purchase request has been submitted successfully!', 'success');
+                        } else {
+                            showPopupModal('Action Required', data.error || 'An error occurred while processing your request.', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error submitting purchase request:', error);
+                        showPopupModal('Connection Issue', 'A network error occurred. Please verify your connection and try again.', 'error');
+                    }
+                });
+            }
+
+            if (deleteForm) {
+                deleteForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const deleteClothesIdInput = document.getElementById('deleteClothesId');
+                    const clothesId = deleteClothesIdInput ? deleteClothesIdInput.value : '';
+                    if (!clothesId) {
+                        showPopupModal('Error', 'Please select an item to delete.', 'error');
+                        return;
+                    }
+
+                    showPopupModal(
+                        'Delete Listing',
+                        'Are you sure you want to permanently delete this listing? All pending swap requests for this item will be removed.',
+                        'error',
+                        async function() {
+                            try {
+                                const response = await fetch('/deleteClothes', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Accept': 'application/json'
+                                    },
+                                    body: JSON.stringify({ clothesId })
+                                });
+
+                                const data = await response.json();
+                                if (response.ok && data.success) {
+                                    showPopupModal('Deleted', data.message || 'Your listing has been deleted successfully!', 'success');
+                                } else {
+                                    showPopupModal('Action Required', data.error || 'An error occurred while processing your request.', 'error');
+                                }
+                            } catch (error) {
+                                console.error('Error submitting delete request:', error);
+                                showPopupModal('Connection Issue', 'A network error occurred. Please verify your connection and try again.', 'error');
+                            }
+                        }
+                    );
+                });
+            }
+        });
+    </script>
+
+    <!-- Beautiful Custom Validation Modal -->
+    <div id="validationModal" class="modal-overlay">
+        <div class="modal-box">
+            <div id="modalIcon" class="modal-icon">
+                <i class="fas"></i>
+            </div>
+            <h3 id="modalTitle" class="modal-title"></h3>
+            <p id="modalMessage" class="modal-message"></p>
+            <div class="modal-actions" id="modalActions">
+                <button id="modalCancelBtn" class="modal-btn modal-btn-secondary" style="display: none;">Cancel</button>
+                <button id="modalCloseBtn" class="modal-btn modal-btn-primary">OK</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

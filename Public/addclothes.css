@@ -1,0 +1,28 @@
+.listing-hero,
+.preview-panel,
+.listing-copy {
+    display: grid;
+    gap: 16px;
+}
+
+.preview-panel {
+    overflow: hidden;
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(95, 122, 101, 0.12);
+}
+
+.preview-panel img {
+    height: 360px;
+    object-fit: cover;
+}
+
+.preview-copy {
+    padding: 18px 20px 22px;
+}
+
+@media (max-width: 960px) {
+    .preview-panel img {
+        height: 280px;
+    }
+}

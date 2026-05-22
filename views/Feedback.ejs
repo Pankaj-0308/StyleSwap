@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head', { title: 'Feedback | SwapStyle', stylesheet: '/feedback.css' }) %>
+<body>
+    <% const feedbackItems = typeof givenFeed !== 'undefined' && Array.isArray(givenFeed) ? givenFeed : []; %>
+    <% const reviews = feedbackItems.slice().reverse(); %>
+    <%- include('partials/navbar', { activePage: 'feedback' }) %>
+
+    <main class="page-shell">
+        <section class="container section">
+            <div class="hero-panel feedback-hero">
+                <div>
+                    <span class="eyebrow">Listen and improve</span>
+                    <h1>Feedback now feels like part of the product, not an afterthought.</h1>
+                    <p class="lead">This page has been redesigned to feel calmer and more trustworthy, while keeping the review loop visible for future product improvements.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="container section">
+            <div class="split-grid feedback-layout">
+                <div class="panel">
+                    <div class="section-header">
+                        <div>
+                            <span class="eyebrow">Share your thoughts</span>
+                            <h2>Leave feedback</h2>
+                        </div>
+                    </div>
+
+                    <form class="form-grid" action="/submitFeedback" method="POST">
+                        <div class="form-group">
+                            <label for="name">Your name</label>
+                            <input type="text" id="name" name="name" placeholder="Enter your name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email address</label>
+                            <input type="email" id="email" name="email" placeholder="Optional email address">
+                        </div>
+                        <div class="form-group">
+                            <label for="rating">Rating</label>
+                            <select id="rating" name="rating" required>
+                                <option value="">Select a rating</option>
+                                <option value="5">5 - Excellent</option>
+                                <option value="4">4 - Good</option>
+                                <option value="3">3 - Fair</option>
+                                <option value="2">2 - Needs work</option>
+                                <option value="1">1 - Poor</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Feedback</label>
+                            <textarea id="message" name="message" placeholder="Tell us what felt clearer, better, or still unfinished." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit feedback</button>
+                    </form>
+                </div>
+
+                <div class="panel">
+                    <div class="section-header">
+                        <div>
+                            <span class="eyebrow">Recent responses</span>
+                            <h2>What users are saying</h2>
+                        </div>
+                    </div>
+
+                    <div class="reviews-stack">
+                        <% if (!reviews.length) { %>
+                            <div class="empty-state">No feedback yet. The first review will appear here once someone submits the form.</div>
+                        <% } %>
+
+                        <% reviews.forEach(feed => { %>
+                            <article class="card review-card">
+                                <div class="card-body">
+                                    <div class="review-topline">
+                                        <div>
+                                            <h3><%= feed.name %></h3>
+                                            <p class="muted"><%= feed.email || 'Community member' %></p>
+                                        </div>
+                                        <span class="pill"><%= feed.rating %>/5</span>
+                                    </div>
+                                    <p class="review-message"><%= feed.message %></p>
+                                </div>
+                            </article>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

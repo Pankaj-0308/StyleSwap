@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head', { title: 'Purchase Requests | SwapStyle', stylesheet: '/userDashboard.css' }) %>
+<body>
+    <%- include('partials/navbar', { activePage: 'purchaseRequests' }) %>
+
+    <main class="page-shell">
+        <section class="container section">
+            <div class="hero-panel dashboard-hero">
+                <div class="profile-summary">
+                    <span class="eyebrow">Your requests</span>
+                    <h1>Purchase Requests</h1>
+                    <p class="lead">Review and manage purchase requests for your items</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="container section">
+            <div class="panel">
+                <div class="section-header">
+                    <div>
+                        <span class="eyebrow">Pending requests</span>
+                        <h2>Requests awaiting your approval</h2>
+                    </div>
+                </div>
+                
+                <% if (hasRequests) { %>
+                    <div class="items-grid">
+                        <% requests.forEach(request => { %>
+                            <article class="card item-card">
+                                <div class="item-image">
+                                    <img src="<%= request.clothesImage %>" alt="<%= request.clothesName %>">
+                                    <div class="overlay-chip">Pending</div>
+                                </div>
+                                <div class="item-content">
+                                    <span class="pill neutral">Purchase Request</span>
+                                    <h3><%= request.clothesName %></h3>
+                                    <p class="muted">Buyer: <%= request.buyerName %></p>
+                                    <div class="item-price">
+                                        <span class="points"><%= request.points %> pts</span>
+                                    </div>
+                                    <div class="item-meta">
+                                        <span>Request ID: <%= request._id %></span>
+                                    </div>
+                                    <div class="actions" style="margin-top: 1rem;">
+                                        <form action="/acceptPurchase" method="POST" style="display: inline;">
+                                            <input type="hidden" name="requestId" value="<%= request._id %>">
+                                            <button type="submit" class="btn btn-primary">Accept</button>
+                                        </form>
+                                        <form action="/rejectPurchase" method="POST" style="display: inline;">
+                                            <input type="hidden" name="requestId" value="<%= request._id %>">
+                                            <button type="submit" class="btn btn-secondary">Reject</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </article>
+                        <% }) %>
+                    </div>
+                    <% } else { %>
+                        <div class="empty-state">
+                            <h3>No purchase requests found.</h3>
+                            <p class="muted">You have no pending requests for your items at the moment.</p>
+                        </div>
+                <% } %>
+            </div>
+        </section>
+    </main>
+
+</body>
+</html>

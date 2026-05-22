@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head', { title: 'Sales History | SwapStyle', stylesheet: '/userDashboard.css' }) %>
+<body>
+    <%- include('partials/navbar', { activePage: 'salesHistory' }) %>
+
+    <main class="page-shell">
+        <section class="container section">
+            <div class="hero-panel dashboard-hero">
+                <div class="profile-summary">
+                    <span class="eyebrow">Transaction Ledger</span>
+                    <h1>Sales History</h1>
+                    <p class="lead">Review points earned by exchanging items with the community</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="container section">
+            <div class="panel">
+                <div class="section-header">
+                    <div>
+                        <span class="eyebrow">Completed & Pending sales</span>
+                        <h2>Swapped Out Items</h2>
+                    </div>
+                </div>
+                
+                <% if (sales.length > 0) { %>
+                    <div class="table-panel" style="margin-top: 1rem;">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Points</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% sales.forEach(s => { %>
+                                        <tr>
+                                            <td>
+                                                <div class="avatar-row">
+                                                    <% if (clothesMap[s.clothesId] && clothesMap[s.clothesId].mainImageUrl) { %>
+                                                        <img class="avatar" src="<%= clothesMap[s.clothesId].mainImageUrl %>" alt="<%= clothesMap[s.clothesId].itemName %>">
+                                                    <% } else { %>
+                                                        <div class="avatar" style="background: rgba(95, 122, 101, 0.1); display: grid; place-items: center; border-radius: 16px;">
+                                                            <i class="fas fa-shirt" style="color: var(--accent-strong);"></i>
+                                                        </div>
+                                                    <% } %>
+                                                    <span style="font-weight: 600; font-size: 1.05rem;">
+                                                        <%= clothesMap[s.clothesId] ? clothesMap[s.clothesId].itemName : 'Unknown Item' %>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <strong style="color: var(--success); font-size: 1.05rem;">+<%= s.points %> pts</strong>
+                                            </td>
+                                            <td>
+                                                <% if (s.status === 'accepted') { %>
+                                                    <span class="status-badge sold">Accepted</span>
+                                                <% } else if (s.status === 'pending') { %>
+                                                    <span class="status-badge pending">Pending Approval</span>
+                                                <% } else if (s.status === 'rejected') { %>
+                                                    <span class="status-badge suspended">Rejected</span>
+                                                <% } else { %>
+                                                    <span class="status-badge active"><%= s.status %></span>
+                                                <% } %>
+                                            </td>
+                                            <td class="muted">
+                                                <%= new Date(s.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) %>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <div class="empty-state" style="padding: 48px 24px;">
+                        <div style="font-size: 3rem; margin-bottom: 16px; color: var(--accent-soft);">
+                            <i class="fas fa-receipt" style="font-size: 48px;"></i>
+                        </div>
+                        <h3>No Sales Registered Yet</h3>
+                        <p class="muted" style="max-width: 480px; margin: 8px auto 0;">When other members request your listed clothing items and you accept them, your sales history will populate here.</p>
+                        <div style="margin-top: 24px;">
+                            <a href="/addClothes" class="btn btn-primary">List an Item to Swap</a>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </section>
+
+        <%- include('partials/footer') %>
+    </main>
+
+</body>
+</html>

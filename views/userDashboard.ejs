@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head', { title: 'Dashboard | SwapStyle', stylesheet: '/userDashboard.css' }) %>
+<body>
+    <% const listings = typeof userClothes !== 'undefined' && Array.isArray(userClothes) ? userClothes : []; %>
+    <% const dashboardUserName = typeof userName !== 'undefined' ? userName : 'Community Member'; %>
+    <% const dashboardUserEmail = typeof userEmail !== 'undefined' ? userEmail : 'member@swapstyle.app'; %>
+    <% const dashboardClothesCount = typeof userClothesCount !== 'undefined' ? userClothesCount : listings.length; %>
+    <% const dashboardPurchasesCount = typeof userPurchasesCount !== 'undefined' ? userPurchasesCount : 0; %>
+    <% const dashboardUserPoints = typeof userPoints !== 'undefined' ? userPoints : 100; %>
+    <%- include('partials/navbar', { activePage: 'dashboard' }) %>
+
+    <main class="page-shell">
+        <section class="container section">
+            <div class="hero-panel dashboard-hero">
+                <div class="split-grid dashboard-header-grid">
+                    <div class="profile-summary">
+                        <span class="eyebrow">Your workspace</span>
+                        <h1><%= dashboardUserName %></h1>
+                        <p class="lead"><%= dashboardUserEmail %></p>
+                        <div class="actions">
+                            <a href="/addClothes" class="btn btn-primary">Add new listing</a>
+                            <a href="/itemlisting" class="btn btn-secondary">Explore marketplace</a>
+                        </div>
+                    </div>
+                    <div class="stat-grid">
+                        <div class="stats-card">
+                            <span class="label">Active listings</span>
+                            <span class="value"><%= dashboardClothesCount %></span>
+                        </div>
+                        <div class="stats-card">
+                            <span class="label">Your points</span>
+                            <span class="value"><%= dashboardUserPoints %> pts</span>
+                        </div>
+                        <div class="stats-card">
+                            <span class="label">Purchases tracked</span>
+                            <span class="value"><%= dashboardPurchasesCount %></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="container section">
+            <div class="panel">
+                <div class="section-header">
+                    <div>
+                        <span class="eyebrow">Inventory</span>
+                        <h2>Your listed items</h2>
+                    </div>
+                    <p>These cards now use the real clothing data coming from MongoDB instead of fallback-only placeholders.</p>
+                </div>
+                <div class="items-grid">
+                    <% if (listings.length > 0) { %>
+                        <% listings.forEach(item => { %>
+                            <article class="card item-card">
+                                <div class="item-image">
+                                    <img src="<%= item.mainImageUrl %>" alt="<%= item.itemName %>">
+                                    <div class="overlay-chip"><%= item.status || 'active' %></div>
+                                </div>
+                                <div class="item-content">
+                                    <span class="pill neutral"><%= item.category || 'Listing' %></span>
+                                    <h3><%= item.itemName %></h3>
+                                    <p class="muted"><%= item.description ? item.description.slice(0, 100) : 'Community listing ready for swap or redemption.' %><%= item.description && item.description.length > 100 ? '...' : '' %></p>
+                                    <div class="item-price">
+                                        <span class="price">$<%= item.price || 0 %></span>
+                                        <span class="points"><%= item.points || 0 %> pts</span>
+                                    </div>
+                                    <div class="item-meta">
+                                        <span>Size: <%= item.size || 'N/A' %></span>
+                                        <span>Condition: <%= item.condition || 'N/A' %></span>
+                                        <span><%= item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Recently added' %></span>
+                                    </div>
+                                </div>
+                            </article>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="empty-state">
+                            You do not have any live listings yet. Add your first piece to see your dashboard fill out here.
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </section>
+
+        <section class="container section">
+            <div class="panel">
+                <div class="section-header">
+                    <div>
+                        <span class="eyebrow">Next actions</span>
+                        <h2>Keep the exchange moving</h2>
+                    </div>
+                </div>
+                <div class="dashboard-actions-grid">
+                    <div class="stats-card">
+                        <span class="label">Improve discoverability</span>
+                        <span class="value">Add cleaner photos</span>
+                    </div>
+                    <div class="stats-card">
+                        <span class="label">Boost conversions</span>
+                        <span class="value">Clarify size + fit</span>
+                    </div>
+                    <div class="stats-card">
+                        <span class="label">Stay active</span>
+                        <span class="value">Review feedback</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+</body>
+</html>

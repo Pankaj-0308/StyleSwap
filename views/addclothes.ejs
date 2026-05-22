@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head', { title: 'List an Item | SwapStyle', stylesheet: '/addclothes.css' }) %>
+<body>
+    <% const items = typeof listedItems !== 'undefined' && Array.isArray(listedItems) ? listedItems : []; %>
+    <%- include('partials/navbar', { activePage: 'addClothes' }) %>
+
+    <main class="page-shell">
+        <section class="container section">
+            <div class="hero-panel listing-hero">
+                <div class="split-grid">
+                    <div class="listing-copy">
+                        <span class="eyebrow">Create a polished listing</span>
+                        <h1>Present your item with more clarity and less clutter.</h1>
+                        <p class="lead">The new listing page focuses on clean structure, image confidence, and the core details buyers actually need.</p>
+                    </div>
+                    <div class="preview-panel">
+                        <img id="imagePreview" src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1200&q=80" alt="Preview">
+                        <div class="preview-copy">
+                            <span class="eyebrow">Live preview</span>
+                            <p>Paste a valid image URL and the preview updates instantly.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="container section">
+            <div class="panel">
+                <div class="section-header">
+                    <div>
+                        <span class="eyebrow">Listing form</span>
+                        <h2>Add a new clothing item</h2>
+                    </div>
+                </div>
+
+                <form class="form-grid add-clothes-form" action="/addClothes" method="POST">
+                    <div class="form-group">
+                        <label for="itemName">Item name</label>
+                        <input type="text" id="itemName" name="itemName" placeholder="Vintage denim jacket" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <select id="category" name="category" required>
+                                <option value="">Select category</option>
+                                <option value="womens">Womenswear</option>
+                                <option value="mens">Menswear</option>
+                                <option value="kids">Kids</option>
+                                <option value="footwear">Footwear</option>
+                                <option value="accessories">Accessories</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="subcategory">Subcategory</label>
+                            <select id="subcategory" name="subcategory">
+                                <option value="">Select subcategory</option>
+                                <option value="dresses">Dresses</option>
+                                <option value="tops">Tops</option>
+                                <option value="bottoms">Bottoms</option>
+                                <option value="outerwear">Outerwear</option>
+                                <option value="sportswear">Sportswear</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="size">Size</label>
+                            <select id="size" name="size" required>
+                                <option value="">Select size</option>
+                                <option value="XS">XS</option>
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                                <option value="XXL">XXL</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="condition">Condition</label>
+                            <select id="condition" name="condition" required>
+                                <option value="">Select condition</option>
+                                <option value="new">Like new</option>
+                                <option value="excellent">Excellent</option>
+                                <option value="good">Good</option>
+                                <option value="fair">Fair</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="brand">Brand</label>
+                            <input type="text" id="brand" name="brand" placeholder="Levi's, Nike, Zara">
+                        </div>
+                        <div class="form-group">
+                            <label for="color">Color</label>
+                            <input type="text" id="color" name="color" placeholder="Stone, black, indigo">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="price">Price</label>
+                            <input type="number" id="price" name="price" placeholder="0.00" min="0" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="points">Points value</label>
+                            <input type="number" id="points" name="points" placeholder="0" min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mainImageUrl">Image URL</label>
+                        <input type="url" id="mainImageUrl" name="mainImageUrl" placeholder="https://example.com/item.jpg" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" placeholder="Describe fit, fabric, wear, and styling notes." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tags">Tags</label>
+                        <input type="text" id="tags" name="tags" placeholder="vintage, denim, minimal, weekend">
+                    </div>
+
+                    <div class="actions">
+                        <button type="submit" class="btn btn-primary">Publish listing</button>
+                        <a href="/itemlisting" class="btn btn-secondary">Browse current items</a>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section class="container section">
+            <div class="panel">
+                <div class="section-header">
+                    <div>
+                        <span class="eyebrow">Current inventory</span>
+                        <h2>Your listed items</h2>
+                    </div>
+                </div>
+
+                <div class="items-grid">
+                    <% if (items.length > 0) { %>
+                        <% items.slice(0, 6).forEach(item => { %>
+                            <article class="card item-card">
+                                <div class="item-image">
+                                    <img src="<%= item.mainImageUrl %>" alt="<%= item.itemName %>">
+                                    <div class="overlay-chip"><%= item.status || 'active' %></div>
+                                </div>
+                                <div class="item-content">
+                                    <span class="pill neutral"><%= item.category || 'Listing' %></span>
+                                    <h3><%= item.itemName %></h3>
+                                    <div class="item-price">
+                                        <span class="price">$<%= item.price || 0 %></span>
+                                        <span class="points"><%= item.points || 0 %> pts</span>
+                                    </div>
+                                    <div class="item-meta">
+                                        <span>Size: <%= item.size || 'N/A' %></span>
+                                        <span>Condition: <%= item.condition || 'N/A' %></span>
+                                    </div>
+                                </div>
+                            </article>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="empty-state">No listings yet. Publish your first item and it will appear here.</div>
+                    <% } %>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+
+        const imageField = document.getElementById('mainImageUrl');
+        const previewImage = document.getElementById('imagePreview');
+        const fallbackImage = 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1200&q=80';
+
+        if (imageField && previewImage) {
+            imageField.addEventListener('input', () => {
+                previewImage.src = imageField.value || fallbackImage;
+            });
+
+            previewImage.addEventListener('error', () => {
+                previewImage.src = fallbackImage;
+            });
+        }
+    </script>
+</body>
+</html>

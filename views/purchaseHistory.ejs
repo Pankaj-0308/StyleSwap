@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head', { title: 'Purchase History | SwapStyle', stylesheet: '/userDashboard.css' }) %>
+<body>
+    <%- include('partials/navbar', { activePage: 'purchaseHistory' }) %>
+
+
+    <main class="page-shell">
+        <section class="container section">
+            <div class="hero-panel dashboard-hero">
+                <div class="profile-summary">
+                    <span class="eyebrow">Transaction Ledger</span>
+                    <h1>Purchase History</h1>
+                    <p class="lead">Review points redeemed to acquire clothing items from the community</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="container section">
+            <div class="panel">
+                <div class="section-header">
+                    <div>
+                        <span class="eyebrow">Completed & Pending purchases</span>
+                        <h2>Acquired Items</h2>
+                    </div>
+                </div>
+                
+                <% if (purchases.length > 0) { %>
+                    <div class="table-panel" style="margin-top: 1rem;">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Points</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% purchases.forEach(p => { %>
+                                        <tr>
+                                            <td>
+                                                <div class="avatar-row">
+                                                    <% if (clothesMap[p.clothesId] && clothesMap[p.clothesId].mainImageUrl) { %>
+                                                        <img class="avatar" src="<%= clothesMap[p.clothesId].mainImageUrl %>" alt="<%= clothesMap[p.clothesId].itemName %>">
+                                                    <% } else { %>
+                                                        <div class="avatar" style="background: rgba(95, 122, 101, 0.1); display: grid; place-items: center; border-radius: 16px;">
+                                                            <i class="fas fa-shirt" style="color: var(--accent-strong);"></i>
+                                                        </div>
+                                                    <% } %>
+                                                    <span style="font-weight: 600; font-size: 1.05rem;">
+                                                        <%= clothesMap[p.clothesId] ? clothesMap[p.clothesId].itemName : 'Unknown Item' %>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <strong style="color: var(--danger); font-size: 1.05rem;">-<%= p.points %> pts</strong>
+                                            </td>
+                                            <td>
+                                                <% if (p.status === 'accepted') { %>
+                                                    <span class="status-badge sold">Accepted</span>
+                                                <% } else if (p.status === 'pending') { %>
+                                                    <span class="status-badge pending">Pending Approval</span>
+                                                <% } else if (p.status === 'rejected') { %>
+                                                    <span class="status-badge suspended">Rejected</span>
+                                                <% } else { %>
+                                                    <span class="status-badge active"><%= p.status %></span>
+                                                <% } %>
+                                            </td>
+                                            <td class="muted">
+                                                <%= new Date(p.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) %>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <div class="empty-state" style="padding: 48px 24px;">
+                        <div style="font-size: 3rem; margin-bottom: 16px; color: var(--accent-soft);">
+                            <i class="fas fa-shopping-bag" style="font-size: 48px;"></i>
+                        </div>
+                        <h3>No Purchases Registered Yet</h3>
+                        <p class="muted" style="max-width: 480px; margin: 8px auto 0;">Explore swappable pieces listed by the community and redeem your points to get items.</p>
+                        <div style="margin-top: 24px;">
+                            <a href="/itemlisting" class="btn btn-primary">Browse Available Items</a>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </section>
+
+        <%- include('partials/footer') %>
+    </main>
+</body>
+</html>

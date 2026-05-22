@@ -1,0 +1,199 @@
+.browse-hero {
+    overflow: hidden;
+}
+
+.featured-layout {
+    align-items: center;
+}
+
+.featured-copy {
+    display: grid;
+    gap: 18px;
+}
+
+.featured-meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.featured-meta .value {
+    font-size: 1.15rem;
+}
+
+.featured-media {
+    min-height: 540px;
+    border-radius: 30px;
+}
+
+.featured-media img {
+    min-height: 540px;
+}
+
+.featured-badge {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(255, 251, 246, 0.9);
+    border: 1px solid rgba(95, 122, 101, 0.14);
+    color: var(--accent-strong);
+    font-size: 0.84rem;
+    font-weight: 700;
+}
+
+.filter-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.marketplace-card {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.marketplace-card:hover,
+.marketplace-card.active {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 36px rgba(44, 50, 45, 0.12);
+}
+
+.marketplace-card.active {
+    border-color: rgba(95, 122, 101, 0.22);
+}
+
+.marketplace-card .item-image {
+    height: 250px;
+}
+
+.marketplace-card .item-image img {
+    height: 250px;
+}
+
+@media (max-width: 960px) {
+    .featured-meta,
+    .filter-row {
+        grid-template-columns: 1fr;
+    }
+
+    .featured-media,
+    .featured-media img {
+        min-height: 360px;
+    }
+}
+
+/* Modern Validation Popup Modal Styling */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(31, 37, 33, 0.45);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-box {
+    background: var(--surface-strong);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: var(--shadow);
+    border-radius: var(--radius-md);
+    width: min(440px, calc(100% - 32px));
+    padding: 32px;
+    text-align: center;
+    transform: translateY(20px) scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-overlay.active .modal-box {
+    transform: translateY(0) scale(1);
+}
+
+.modal-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+}
+
+.modal-icon.error {
+    background: rgba(156, 93, 80, 0.12);
+    color: var(--danger);
+}
+
+.modal-icon.success {
+    background: rgba(86, 112, 92, 0.12);
+    color: var(--success);
+}
+
+.modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text);
+}
+
+.modal-message {
+    color: var(--muted);
+    font-size: 1.02rem;
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+}
+
+.modal-btn {
+    min-height: 46px;
+    padding: 0 36px;
+    font-size: 0.96rem;
+    font-weight: 700;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-btn-primary {
+    background: linear-gradient(145deg, var(--accent-strong), var(--accent));
+    color: #fdfaf4;
+    box-shadow: 0 10px 20px rgba(65, 88, 70, 0.18);
+}
+
+.modal-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(65, 88, 70, 0.24);
+}
+
+.modal-btn-secondary {
+    background: transparent;
+    border: 1.5px solid var(--line-strong, rgba(44, 59, 50, 0.2));
+    color: var(--text);
+    margin-right: 12px;
+}
+
+.modal-btn-secondary:hover {
+    background: rgba(44, 59, 50, 0.05);
+    border-color: var(--text);
+}

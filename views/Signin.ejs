@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head', { title: 'Sign Up | SwapStyle', stylesheet: '/signup.css' }) %>
+<body>
+    <%- include('partials/navbar', { activePage: 'signup' }) %>
+
+
+    <main class="page-shell auth-shell">
+        <section class="container">
+            <div class="hero-panel auth-layout signup-layout">
+                <div class="auth-copy">
+                    <span class="eyebrow">Join the exchange</span>
+                    <h1>Create an account and start circulating great clothing again.</h1>
+                    <p class="lead">SwapStyle is built for people who want a more intentional way to refresh their wardrobe through swaps, points, and clear listing quality.</p>
+                    <div class="stat-grid">
+                        <div class="stats-card">
+                            <span class="label">List with detail</span>
+                            <span class="value">Photos + sizing</span>
+                        </div>
+                        <div class="stats-card">
+                            <span class="label">Redeem with ease</span>
+                            <span class="value">Points ready</span>
+                        </div>
+                        <div class="stats-card">
+                            <span class="label">Community feel</span>
+                            <span class="value">Less waste</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="auth-panel">
+                    <div class="auth-header">
+                        <span class="eyebrow">New member</span>
+                        <h2>Create account</h2>
+                        <p class="muted">Set up your profile to start listing and swapping.</p>
+                    </div>
+
+                    <form class="form-grid signup-form" action="/addAccount" method="POST">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstname">First name</label>
+                                <div class="input-wrap">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" id="firstname" name="firstname" placeholder="First name" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname">Last name</label>
+                                <div class="input-wrap">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" id="lastname" name="lastname" placeholder="Last name" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email address</label>
+                            <div class="input-wrap">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="email" name="email" placeholder="name@example.com" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Phone number</label>
+                            <div class="input-wrap">
+                                <i class="fas fa-phone"></i>
+                                <input type="tel" id="phone" name="phone" placeholder="Phone number" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <div class="input-wrap">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="password" name="password" placeholder="Create a password" required>
+                                <button type="button" class="toggle-password" data-target="password" aria-label="Show password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm password</label>
+                            <div class="input-wrap">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Repeat your password" required>
+                                <button type="button" class="toggle-password" data-target="confirmPassword" aria-label="Show password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <label class="checkbox-row">
+                            <input type="checkbox" name="terms" required>
+                            <span>I agree to the SwapStyle terms and community guidelines.</span>
+                        </label>
+
+                        <label class="checkbox-row">
+                            <input type="checkbox" name="newsletter">
+                            <span>Send me product updates and swap inspiration.</span>
+                        </label>
+
+                        <button type="submit" class="btn btn-primary submit-btn">
+                            <span>Create account</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </form>
+
+                    <p class="auth-switch">Already a member? <a href="/Login">Sign in instead</a>.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+
+        document.querySelectorAll('.toggle-password').forEach(button => {
+            button.addEventListener('click', () => {
+                const input = document.getElementById(button.dataset.target);
+                const icon = button.querySelector('i');
+                const isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+                icon.classList.toggle('fa-eye', !isPassword);
+                icon.classList.toggle('fa-eye-slash', isPassword);
+            });
+        });
+
+        const confirmPassword = document.getElementById('confirmPassword');
+        const password = document.getElementById('password');
+
+        if (confirmPassword && password) {
+            confirmPassword.addEventListener('input', () => {
+                confirmPassword.setCustomValidity(
+                    confirmPassword.value && confirmPassword.value !== password.value
+                        ? 'Passwords do not match'
+                        : ''
+                );
+            });
+        }
+
+        const signupForm = document.querySelector('.signup-form');
+        const submitButton = document.querySelector('.submit-btn');
+
+        if (signupForm && submitButton) {
+            signupForm.addEventListener('submit', () => {
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Creating account</span>';
+                submitButton.disabled = true;
+            });
+        }
+    </script>
+</body>
+</html>

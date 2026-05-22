@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head', { title: 'My Purchase Requests | SwapStyle', stylesheet: '/userDashboard.css' }) %>
+<body>
+    <%- include('partials/navbar', { activePage: 'myPurchaseRequests' }) %>
+
+    <main class="page-shell">
+        <section class="container section">
+            <div class="hero-panel dashboard-hero">
+                <div class="profile-summary">
+                    <span class="eyebrow">Your activity</span>
+                    <h1>My Purchase Requests</h1>
+                    <p class="lead">Track the status of your purchase requests</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="container section">
+            <div class="panel">
+                <div class="section-header">
+                    <div>
+                        <span class="eyebrow">Request history</span>
+                        <h2>All your purchase requests</h2>
+                    </div>
+                </div>
+                
+                <% if (hasRequests) { %>
+                    <div class="items-grid">
+                        <% requests.forEach(request => { %>
+                            <article class="card item-card">
+                                <div class="item-image">
+                                    <img src="<%= request.clothesImage %>" alt="<%= request.clothesName %>">
+                                    <div class="overlay-chip <%= request.status %>"><%= request.status.charAt(0).toUpperCase() + request.status.slice(1) %></div>
+                                </div>
+                                <div class="item-content">
+                                    <span class="pill neutral">Purchase Request</span>
+                                    <h3><%= request.clothesName %></h3>
+                                    <p class="muted">Seller: <%= request.sellerName %></p>
+                                    <div class="item-price">
+                                        <span class="points"><%= request.points %> pts</span>
+                                    </div>
+                                    <div class="item-meta">
+                                        <span>Status: <%= request.status.charAt(0).toUpperCase() + request.status.slice(1) %></span>
+                                        <span><%= new Date(request.createdAt).toLocaleDateString() %></span>
+                                    </div>
+                                </div>
+                            </article>
+                        <% }) %>
+                    </div>
+                    <% } else { %>
+                        <div class="empty-state">
+                            <h3>No purchase requests made yet.</h3>
+                            <p class="muted">Browse the marketplace to find items you'd like to purchase.</p>
+                        </div>
+                <% } %>
+            </div>
+        </section>
+    </main>
+
+</body>
+</html>

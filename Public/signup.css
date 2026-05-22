@@ -1,0 +1,41 @@
+.auth-shell {
+    display: flex;
+    align-items: center;
+}
+
+.signup-layout {
+    display: grid;
+    grid-template-columns: 0.95fr 1.05fr;
+    gap: 26px;
+}
+
+.auth-copy,
+.auth-header {
+    display: grid;
+    gap: 16px;
+}
+
+.auth-panel {
+    display: grid;
+    gap: 18px;
+}
+
+.submit-btn {
+    width: 100%;
+}
+
+.auth-switch {
+    color: var(--muted);
+}
+
+.auth-switch a {
+    color: var(--accent-strong);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+@media (max-width: 960px) {
+    .signup-layout {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,21 @@
+.feedback-layout {
+    align-items: start;
+}
+
+.reviews-stack {
+    display: grid;
+    gap: 14px;
+}
+
+.review-topline {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 14px;
+    margin-bottom: 12px;
+}
+
+.review-message {
+    color: var(--text);
+    line-height: 1.7;
+}
