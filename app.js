@@ -1,6 +1,3 @@
-// Gemini Chatbot Proxy Route
-const fetch = require('node-fetch');
-
 const path = require('path');
 const express = require('express');
 const app = express();
