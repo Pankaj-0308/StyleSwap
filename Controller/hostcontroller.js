@@ -478,7 +478,7 @@ exports.getPurchaseRequests = async (req, res) => {
         const clothes = await Clothes.findById(request.clothesId);
         const buyer = await UserAccount.findById(request.buyerId);
         return {
-          ...request,
+          ...request.toObject(),
           clothesName: clothes ? clothes.itemName : 'Unknown Item',
           clothesImage: clothes ? clothes.mainImageUrl : '',
           buyerName: buyer ? `${buyer.firstname} ${buyer.lastname}` : 'Unknown Buyer'
@@ -509,7 +509,7 @@ exports.getMyPurchaseRequests = async (req, res) => {
         const clothes = await Clothes.findById(request.clothesId);
         const seller = await UserAccount.findById(request.sellerId);
         return {
-          ...request,
+          ...request.toObject(),
           clothesName: clothes ? clothes.itemName : 'Unknown Item',
           clothesImage: clothes ? clothes.mainImageUrl : '',
           sellerName: seller ? `${seller.firstname} ${seller.lastname}` : 'Unknown Seller'
